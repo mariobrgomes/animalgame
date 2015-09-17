@@ -12,5 +12,4 @@ public abstract class Node {
     private Node parent;
     private Node rChild;
     private Node lChild;
-    private Node root;
 }

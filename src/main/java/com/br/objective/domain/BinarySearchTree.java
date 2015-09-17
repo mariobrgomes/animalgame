@@ -13,14 +13,14 @@ public class BinarySearchTree {
     private static final String ROOT_L = "Tubarão";
     private static final String ASK_ATTR = "askAttr";
     private static final String GUESS = "guess";
-    private static final String ANIMAL_GUESSED = "O animal que você pensou é?";
+    private static final String ANIMAL_GUESSED = "O animal que você pensou vive na agua?";
+    private static final String ANIMAL_IS ="O animal que voc\u00ea pensou \u00e9 %s?";
     private static final String ANIMALS = "Animais";
-    private static final String WHICH_ANIMAL = "Em qual animal você pensou?";
+    private static final String WHICH_ANIMAL = "Em qual animal voc\\u00ea pensou?";
     private static final String ANIMAL = "Um(a) %s _____________ mas um(a) %s n\u00e3o.";
     private static final String L = "L";
     private static final String R = "R";
     private static final String MESSAGE_WIN = "Acertei novamente!";
-
 
     private Node root;
 
@@ -34,6 +34,10 @@ public class BinarySearchTree {
 
     }
 
+    public Node getRoot() {
+        return root;
+    }
+
     public void messageWin() {
         JOptionPane.showMessageDialog(null, MESSAGE_WIN);
     }
@@ -42,17 +46,18 @@ public class BinarySearchTree {
 
         if (ask.equals(ASK_ATTR)) {
 
-            Attr attr = (Attr) node;
 
-            return JOptionPane.showConfirmDialog(null,
-                                                String.format(ANIMAL_GUESSED, attr.getAttr()),
-                                                ANIMALS,
-                                                JOptionPane.YES_NO_OPTION,
-                                                JOptionPane.QUESTION_MESSAGE);
+                Attr attr = (Attr) node;
+                return JOptionPane.showConfirmDialog(null,
+                        String.format(ANIMAL_GUESSED, attr.getAttr()),
+                        ANIMALS,
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+
         } else if (ask.equals(GUESS)) {
-            Animal animal= (Animal) node;
+            Animal animal = (Animal) node;
             return JOptionPane.showConfirmDialog(null,
-                                                String.format(ANIMAL_GUESSED, animal.getName()),
+                                                String.format(ANIMAL_IS, animal.getName()),
                                                 ANIMALS,
                                                 JOptionPane.YES_NO_OPTION,
                                                 JOptionPane.QUESTION_MESSAGE);
@@ -61,24 +66,27 @@ public class BinarySearchTree {
     }
 
     public Node preOrder (Node current) {
+        if (!(current instanceof Attr)) {
+            return current;
+        }
         if (ask(current, ASK_ATTR) == 0) {
             current = current.getLChild();
 
             if (current != null) {
                 if (ask(current, GUESS) == 0) {
                     messageWin();
-                } else {
-                    insertNode(current, L);
                 }
-            } else {
-                current = preOrder(current.getRChild());
+                 } else {
+                insertNode(current, L);
+            }
+        } else {
+            current = preOrder(current.getRChild());
 
-                if (current != null) {
-                    if (ask(current, GUESS) == 0) {
-                        messageWin();
+            if (current != null) {
+                if (ask(current, GUESS) == 0) {
+                    messageWin();
                     } else {
-                        insertNode(current, R);
-                    }
+                    insertNode(current, R);
                 }
             }
         }
@@ -92,28 +100,28 @@ public class BinarySearchTree {
 
         while (newAnimal == null || newAnimal.isEmpty() || !newAnimal.matches("[A-Z a-z]*")) {
             newAnimal = JOptionPane.showInputDialog(WHICH_ANIMAL);
-
+        }
             animal = new Animal(newAnimal);
 
             String message = String.format(ANIMAL, newAnimal, currentAnimal);
             String diff = JOptionPane.showInputDialog(message);
 
-            while (diff == null || diff.isEmpty() || diff.matches("[A-Z a-z]*")){
+            while (diff == null || diff.isEmpty() || !diff.matches("[A-Z a-z]*")) {
                 diff = JOptionPane.showInputDialog(message);
-
-                Attr attr = new Attr(diff);
+            }
+                Attr newAttr = new Attr(diff);
 
                 if (value.equals(L)) {
-                    currentNode.setLChild(attr);
+                    currentNode.getParent().setLChild(newAttr);
                 } else if (value.equals(R)) {
-                    currentNode.setRChild(attr);
+                    currentNode.getParent().setRChild(newAttr);
                 }
 
-                animal.setParent(attr);
-                attr.setParent(currentNode.getParent());
-                attr.setLChild(animal);
-                attr.setRChild(currentNode);
+                animal.setParent(newAttr);
+                newAttr.setParent(currentNode.getParent());
+                newAttr.setLChild(animal);
+                newAttr.setRChild(currentNode);
             }
         }
-    }
-}
+
+

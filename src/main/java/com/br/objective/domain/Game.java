@@ -10,14 +10,13 @@ public class Game {
     private static final String THINK = "Pense em um animal";
     private static final String TITLE = "Animais";
 
-    Node node;
-
     public void newGame() {
         BinarySearchTree binarySearchTree = new BinarySearchTree();
 
-        while (JOptionPane.showConfirmDialog(null, THINK, TITLE, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-            binarySearchTree.preOrder(node.getRoot());
+        Object[] options = {"OK"};
+
+        while (JOptionPane.showOptionDialog(null,THINK, TITLE, JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]) == JOptionPane.OK_OPTION) {
+            binarySearchTree.preOrder(binarySearchTree.getRoot());
         }
     }
-
 }
